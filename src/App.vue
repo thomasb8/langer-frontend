@@ -8,7 +8,9 @@ import WordList from "@/components/WordList.vue";
     <div class="logo">
       Langer
     </div>
-    <WordList @word-select="this.$router.push(`/word/${$event.word}/${$event.id}`)"/>
+    <WordList @word-select="$router.push(`/word/${$event.word}/${$event.id}`)"/>
+    <RouterLink to="login">Login</RouterLink>
+    <RouterLink to="register">Register</RouterLink>
   </header>
 
   <RouterView />

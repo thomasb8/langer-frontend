@@ -1,5 +1,5 @@
 <template>
-  <table>
+  <table v-if="tableData">
     <tr>
       <th></th>
       <th>Singular</th>
@@ -34,10 +34,14 @@
 import { defineComponent } from "vue";
 import type { Conjugation } from "@/word/Word";
 import { WordTags } from "@/word/WordTags";
+import { Word } from "@/word/Word";
 
 export default defineComponent({
   props: {
-    word: null
+    word: {
+      type: Word,
+      required: true
+    }
   },
   computed: {
     tableData() {
@@ -46,7 +50,6 @@ export default defineComponent({
   },
   methods: {
     getTableWord() {
-      console.log(this.word);
       if (!this.word) return;
       const dative = this.getSingularAndPluralForCase(this.word.conjugations, WordTags.DATIVE);
       const accusative = this.getSingularAndPluralForCase(this.word.conjugations, WordTags.ACCUSATIVE)
@@ -68,7 +71,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-  td {
-    padding: 1rem;
-    border: 1px solid rgba(255, 0, 0, 0.4);  }
+td {
+  padding: 1rem;
+  border: 1px solid rgba(255, 0, 0, 0.4);  }
 </style>

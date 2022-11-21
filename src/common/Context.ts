@@ -1,12 +1,15 @@
-import { ApiService } from "@/common/ApiService";
+import { WordService } from "@/common/WordService";
 import api from "@/common/api";
+import { AuthService } from "@/common/AuthService";
 
 export default function createContext(): AppContext {
   return {
-    apiService: new ApiService(api)
+    wordService: new WordService(api),
+    authService: new AuthService(api)
   }
 }
 
 export interface AppContext {
-  apiService: ApiService
+  wordService: WordService,
+  authService: AuthService
 }

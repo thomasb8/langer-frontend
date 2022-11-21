@@ -1,6 +1,6 @@
 <template>
   <div class="input-container">
-    <input type="text" :value="inputValue" @input="inputValue = $event.target.value;" @click="results.length > 0 ? openDropdown() : null"/>
+    <input type="text" v-model="inputValue" @click="results.length > 0 ? openDropdown() : null"/>
     <ul class="word-list-dropdown" v-show="dropdownOpen">
       <li v-for="(result, index) of results" v-bind:key="index" @click="selectWord(result)">
         <b>{{ result.word }}</b>&nbsp;--&nbsp;{{ result.senses[0].meaning ?? '' }}
@@ -18,8 +18,8 @@ import { debounce } from "@/common/utilities";
 
 export default defineComponent({
   setup() {
-    const { apiService } = inject(CONTEXT) as AppContext;
-    return { apiService };
+    const { wordService } = inject(CONTEXT) as AppContext;
+    return { wordService: wordService };
   },
   data() {
     return {
@@ -30,7 +30,7 @@ export default defineComponent({
   },
   methods: {
     getWords: async function(word: string) {
-      this.results = await this.apiService.getWords(word);
+      this.results = await this.wordService.getWords(word);
       if (this.results.length) {
         this.openDropdown();
       }
@@ -47,7 +47,7 @@ export default defineComponent({
         this.dropdownOpen = false;
       }
     },
-    getDebouncedWords: debounce(function(this: any, value: string) { this.getWords(value) }, 400)
+    getDebouncedWords: debounce(function(this: any, value: string) { this.getWords(value) }, 200)
   },
   watch: {
     inputValue(newVal) {

@@ -1,3 +1,5 @@
+import type { WordTags } from "@/word/WordTags";
+
 export class Word {
   constructor(
     readonly id: string,
@@ -26,7 +28,7 @@ export class Word {
 
 export type Conjugation = {
   form: string,
-  tags: Array<string>
+  tags: Array<WordTags>
 };
 
 export type Sense = {

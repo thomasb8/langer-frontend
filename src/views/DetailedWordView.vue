@@ -27,6 +27,9 @@
   <div v-if="detailedWord.position === 'noun'">
     <NounTable :word="detailedWord"></NounTable>
   </div>
+  <div v-if="detailedWord.position === 'verb'">
+    <VerbTable :word="detailedWord"></VerbTable>
+  </div>
 </template>
 
 <script lang="ts">
@@ -35,12 +38,13 @@ import { CONTEXT } from "@/common/keys";
 import type { AppContext } from "@/common/Context";
 import type { Word } from "@/word/Word";
 import NounTable from "@/components/NounTable.vue";
+import VerbTable from "@/components/VerbTable.vue";
 
 export default defineComponent({
-  components: { NounTable },
+  components: { VerbTable, NounTable },
   setup() {
-    const { apiService } = inject(CONTEXT) as AppContext;
-    return { apiService };
+    const { wordService } = inject(CONTEXT) as AppContext;
+    return { wordService: wordService };
   },
   data() {
     return {
@@ -51,7 +55,7 @@ export default defineComponent({
   },
   methods: {
     async getWordData() {
-      this.detailedWord = await this.apiService.getDetailedWord(this.wordId);
+      this.detailedWord = await this.wordService.getDetailedWord(this.wordId);
     }
   },
   created() {
