@@ -2,6 +2,7 @@
   "name": "langer-frontend",
   "version": "0.0.0",
   "scripts": {
+    "start": "npx http-server -P http://127.0.0.1:${PORT} ./dist",
     "dev": "vite",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
