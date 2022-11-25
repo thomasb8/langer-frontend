@@ -1,0 +1,13 @@
+server_tokens off;
+
+server {
+  listen ${PORT};
+  absolute_redirect off;
+
+  location / {
+    root /usr/share/nginx/html;
+    index index.html;
+    try_files $uri $uri/ /index.html?$args;
+    expires -1;
+  }
+}
