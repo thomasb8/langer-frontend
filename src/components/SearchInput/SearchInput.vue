@@ -1,7 +1,7 @@
 <template>
   <div class="input-container">
     <SearchIcon></SearchIcon>
-    <input type="text" :value="inputValue" @input="$emit('onChange', $event.target.value)"/>
+    <input type="text" :value="inputValue" @input="onChange"/>
   </div>
 </template>
 
@@ -17,6 +17,11 @@ export default defineComponent({
     inputValue: {
       type: String,
       required: true
+    }
+  },
+  methods: {
+    onChange(event: Event) {
+      this.$emit('onChange', (event.target as HTMLInputElement).value);
     }
   }
 })
