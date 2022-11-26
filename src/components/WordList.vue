@@ -72,15 +72,21 @@ export default defineComponent({
   .word-list-container {
     ul {
       position: absolute;
+      top: 42px;
       z-index: 1;
-      background: black;
+      background: white;
+      color: var(--color-text-dark);
+      border-radius: 8px;
+      max-height: 80vh;
+      overflow: scroll;
       li {
-        border: 1px solid rgba(255, 0, 0, 0.4);
+        border-bottom: 1px solid var(--langer-color-black);
+        padding: 13px;
         display: flex;
         align-items: center;
         &:hover {
           cursor: pointer;
-          background: rgba(255, 255, 255, 0.1);
+          background: #d9d9d9;
         }
       }
     }
