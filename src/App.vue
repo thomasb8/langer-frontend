@@ -1,30 +1,26 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import WordList from "@/components/WordList.vue";
+import Header from "@/components/HeaderComponent.vue";
 </script>
 
 <template>
-  <header>
-    <div class="logo">
-      Langer
+  <Header></Header>
+  <div class="container">
+    <aside class="sidebar"></aside>
+    <div class="content">
+      <RouterView />
     </div>
-    <WordList @word-select="$router.push(`/word/${$event.word}/${$event.id}`)"/>
-    <RouterLink to="login">Login</RouterLink>
-    <RouterLink to="register">Register</RouterLink>
-  </header>
-
-  <RouterView />
+  </div>
 </template>
 
 <style scoped lang="scss">
-  header {
-    display: flex;
-    height: 50px;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 0 2rem;
-    .logo {
-      margin-right: 2rem;
+  .container {
+    display: grid;
+    height: calc(100vh - 50px);
+    grid-template-columns: 300px auto;
+    .sidebar {
+      background: var(--langer-color-grey);
+      height: 100%;
     }
   }
 
