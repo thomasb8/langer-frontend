@@ -6,7 +6,10 @@
     </SearchInput>
     <ul class="word-list-dropdown" v-show="dropdownOpen">
       <li v-for="(result, index) of results" v-bind:key="index" @click="selectWord(result)">
-        <b>{{ result.word }}</b>&nbsp;--&nbsp;{{ result.senses[0].meaning ?? '' }}
+        <div>
+          <b>{{ result.word }}</b>
+        </div>
+        <span>{{ result.senses[0].meaning ?? '' }}</span>
       </li>
     </ul>
   </div>
@@ -84,6 +87,16 @@ export default defineComponent({
         padding: 13px;
         display: flex;
         align-items: center;
+        b {
+          margin-right: 10px;
+          white-space: nowrap;
+          min-width: fit-content;
+        }
+        span {
+          font-size: .9rem;
+          line-height: 1.2rem;
+          white-space: break-spaces;
+        }
         &:hover {
           cursor: pointer;
           background: #d9d9d9;
