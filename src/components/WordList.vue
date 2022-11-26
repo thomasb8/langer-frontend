@@ -1,6 +1,9 @@
 <template>
-  <div class="input-container">
-    <input type="text" v-model="inputValue" @click="results.length > 0 ? openDropdown() : null"/>
+  <div class="word-list-container">
+    <SearchInput :input-value="inputValue"
+                 @click="results.length > 0 ? openDropdown() : null"
+                 @onChange="inputValue = $event">
+    </SearchInput>
     <ul class="word-list-dropdown" v-show="dropdownOpen">
       <li v-for="(result, index) of results" v-bind:key="index" @click="selectWord(result)">
         <b>{{ result.word }}</b>&nbsp;--&nbsp;{{ result.senses[0].meaning ?? '' }}
@@ -15,8 +18,10 @@ import { defineComponent, inject } from "vue";
 import { CONTEXT } from "@/common/keys";
 import type { AppContext } from "@/common/Context";
 import { debounce } from "@/common/utilities";
+import SearchInput from "@/components/SearchInput/SearchInput.vue";
 
 export default defineComponent({
+  components: { SearchInput },
   setup() {
     const { wordService } = inject(CONTEXT) as AppContext;
     return { wordService: wordService };
@@ -64,8 +69,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-  .input-container {
-    width: 100%;
+  .word-list-container {
     ul {
       position: absolute;
       z-index: 1;
