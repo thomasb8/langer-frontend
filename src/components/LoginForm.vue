@@ -10,6 +10,7 @@
 import { defineComponent, inject } from "vue";
 import { CONTEXT } from "@/common/keys";
 import type { AppContext } from "@/common/Context";
+import { store } from "@/common/store";
 
 export default defineComponent({
   setup() {
@@ -19,12 +20,14 @@ export default defineComponent({
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      store
     }
   },
   methods: {
-    login() {
-      this.authService.login(this.email, this.password);
+    async login() {
+      const user = await this.authService.login(this.email, this.password);
+      store.setUser(user);
     }
   }
 })
