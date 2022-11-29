@@ -24,6 +24,10 @@ export class Word {
       n: 'das'
     }[this.gender] || '';
   }
+
+  getMeanings() {
+    return this.senses.map(sense => sense.meaning);
+  }
 }
 
 export type Conjugation = {
