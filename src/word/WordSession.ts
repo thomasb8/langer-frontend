@@ -2,16 +2,26 @@ import { Word } from "@/word/Word";
 
 export default class WordSession {
   constructor(
-    private readonly id: string,
-    private readonly entries: WordSessionEntry[],
+    readonly id: string,
+    readonly createdAt: string,
+    readonly entries: WordSessionEntry[],
   ) {}
 
   static fromDto(dto: any) {
-    return new WordSession(dto.id, dto.entries.map((it: any) => ({ wordId: it.wordId, word: Word.fromDto(it.word) }) ));
+    return new WordSession(dto.id, dto.createdAt, dto.entries.map((it: any) => ({ wordId: it.wordId, word: Word.fromDto(it.word) }) ));
+  }
+
+  getFormattedCreationDate() {
+    return Intl.DateTimeFormat(navigator.language).format(Date.parse(this.createdAt));
+  }
+
+  isOlderThanOneDay() {
+    const dayInMilliseconds = 24*60*60*1000;
+    return (Date.now() - Date.parse(this.createdAt)) / dayInMilliseconds > 1;
   }
 }
 
-interface WordSessionEntry {
+export interface WordSessionEntry {
   wordId: string,
   word: Word
 }
