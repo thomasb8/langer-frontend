@@ -4,9 +4,14 @@ import WordSession from "@/word/WordSession";
 export class WordSessionService {
   constructor(private readonly axios: AxiosInstance) {}
 
-  async list() {
+  async list(): Promise<WordSession[]> {
     const res = await this.axios.get('/word-session');
     return res.data.map((it: any) => WordSession.fromDto(it));
+  }
+
+  async get(sessionId: string): Promise<WordSession> {
+    const res = await this.axios.get(`/word-session/${sessionId}`);
+    return WordSession.fromDto(res.data);
   }
 
   async create() {
