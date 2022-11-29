@@ -39,12 +39,13 @@ import type { AppContext } from "@/common/Context";
 import type { Word } from "@/word/Word";
 import NounTable from "@/components/NounTable.vue";
 import VerbTable from "@/components/VerbTable.vue";
+import { store } from "@/common/store";
 
 export default defineComponent({
   components: { VerbTable, NounTable },
   setup() {
-    const { wordService } = inject(CONTEXT) as AppContext;
-    return { wordService: wordService };
+    const { wordService, wordSessionService } = inject(CONTEXT) as AppContext;
+    return { wordService: wordService, wordSessionService: wordSessionService };
   },
   data() {
     return {
@@ -56,17 +57,26 @@ export default defineComponent({
   methods: {
     async getWordData() {
       this.detailedWord = await this.wordService.getDetailedWord(this.wordId);
+    },
+    async addWordToExistingSession(wordId: string) {
+      if (store.isUserLoggedIn() && store.latestSession() && !store.latestSessionHasWord(wordId)) {
+        await this.wordSessionService.addWord(store.latestSession()!.id, wordId);
+        const updated = await this.wordSessionService.get(store.latestSession().id);
+        store.updateLatestSession(updated);
+      }
     }
   },
   created() {
     if (this.word && this.wordId) {
       this.getWordData();
+      this.addWordToExistingSession(this.wordId);
     }
     this.$watch(() => this.$route.params,
   (toParams: any) => {
         this.word = toParams.word;
         this.wordId = toParams.id;
         this.getWordData();
+        this.addWordToExistingSession(this.wordId);
     })
   }
 })

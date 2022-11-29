@@ -20,6 +20,10 @@ export default defineComponent({
     logout() {
       store.setUser(null);
       this.authService.logout();
+      this.$router.push('/');
+    },
+    async onWordSelect(event: { word: string, id: string }) {
+      this.$router.push(`/word/${event.word}/${event.id}`)
     }
   }
 });
@@ -30,12 +34,12 @@ export default defineComponent({
     <div class="logo">
       Langer
     </div>
-    <WordList @word-select="$router.push(`/word/${$event.word}/${$event.id}`)"/>
+    <WordList @word-select="onWordSelect($event)"/>
     <div class="links">
       <RouterLink v-if="!store.isUserLoggedIn()" to="/login">Login</RouterLink>
       <RouterLink v-if="!store.isUserLoggedIn()" to="/register">Register</RouterLink>
       <div v-if="store.isUserLoggedIn()">
-        {{ store.user.email }}
+        {{ store.user && store.user.email }}
         <button @click="logout()">Logout</button>
       </div>
     </div>

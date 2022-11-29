@@ -28,6 +28,7 @@ export default defineComponent({
     async login() {
       const user = await this.authService.login(this.email, this.password);
       store.setUser(user);
+      this.$router.push('/');
     }
   }
 })

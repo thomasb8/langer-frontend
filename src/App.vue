@@ -6,27 +6,34 @@ import { inject, ref } from "vue";
 import type { AppContext } from "@/common/Context";
 import { StorageKey } from "@/common/Storage";
 import { store } from "@/common/store";
+import WordSessionList from "@/components/WordSessionList.vue";
 const { storage, authService } = inject(CONTEXT) as AppContext;
 
 const token = storage.get(StorageKey.LOGIN_ACCESS_TOKEN);
 const loaded = ref(false);
-if (token) {
-  authService.getProfile(token)
-      .then(user => {
-        store.setUser(user);
-        loaded.value = true;
-      })
-      .catch(e => console.log(e));
-} else {
-  loaded.value = true;
-}
+(async function setup() {
+  if (token) {
+    try {
+      const user = await authService.getProfile(token);
+      store.setUser(user);
+      loaded.value = true;
+    } catch (e) {
+      console.log(e);
+    }
+  } else {
+    loaded.value = true;
+  }
+})();
+
 
 </script>
 
 <template>
   <Header v-if="loaded"></Header>
   <div class="container">
-    <aside class="sidebar"></aside>
+    <aside class="sidebar">
+      <WordSessionList></WordSessionList>
+    </aside>
     <div class="content">
       <RouterView />
     </div>
