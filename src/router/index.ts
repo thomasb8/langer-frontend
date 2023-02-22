@@ -13,7 +13,7 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/word/:word/:id',
+      path: '/word/:word',
       name: 'detailed-word',
       component: DetailedWordView
     },

@@ -15,10 +15,16 @@ export const store = reactive({
   latestSession() {
     return this.wordSessions[0];
   },
-  updateLatestSession(session: WordSession) {
-    this.wordSessions[0] = session;
+  updateSession(session: WordSession) {
+    const i = this.wordSessions.findIndex(it => it.id === session.id);
+    if (i >= 0) {
+      this.wordSessions[i] = session;
+    }
   },
-  latestSessionHasWord(wordId: string): boolean {
-    return this.latestSession()?.entries?.some((it: WordSessionEntry) => it.wordId === wordId) || false
+  addSession(session: WordSession) {
+    this.wordSessions.unshift(session);
+  },
+  latestSessionHasWord(word: string): boolean {
+    return this.latestSession()?.entries?.some((it: WordSessionEntry) => it.word === word) || false
   }
 })

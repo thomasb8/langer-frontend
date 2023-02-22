@@ -23,7 +23,7 @@ export default defineComponent({
       this.$router.push('/');
     },
     async onWordSelect(event: { word: string, id: string }) {
-      this.$router.push(`/word/${event.word}/${event.id}`)
+      this.$router.push(`/word/${event.word}`)
     }
   }
 });

@@ -8,7 +8,7 @@ export default class WordSession {
   ) {}
 
   static fromDto(dto: any) {
-    return new WordSession(dto.id, dto.createdAt, dto.entries.map((it: any) => ({ wordId: it.wordId, word: Word.fromDto(it.word) }) ));
+    return new WordSession(dto.id, dto.createdAt, dto.entries);
   }
 
   getFormattedCreationDate() {
@@ -22,6 +22,5 @@ export default class WordSession {
 }
 
 export interface WordSessionEntry {
-  wordId: string,
-  word: Word
+  word: string
 }

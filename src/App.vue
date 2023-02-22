@@ -2,12 +2,13 @@
 import { RouterView } from 'vue-router'
 import Header from "@/components/HeaderComponent.vue";
 import { CONTEXT } from "@/common/keys";
-import { inject, ref } from "vue";
+import { inject, ref, watch } from "vue";
 import type { AppContext } from "@/common/Context";
 import { StorageKey } from "@/common/Storage";
 import { store } from "@/common/store";
 import WordSessionList from "@/components/WordSessionList.vue";
-const { storage, authService } = inject(CONTEXT) as AppContext;
+import type User from './user/User';
+const { storage, authService, wordSessionService } = inject(CONTEXT) as AppContext;
 
 const token = storage.get(StorageKey.LOGIN_ACCESS_TOKEN);
 const loaded = ref(false);
@@ -17,6 +18,7 @@ const loaded = ref(false);
       const user = await authService.getProfile(token);
       store.setUser(user);
       loaded.value = true;
+      setUserSessions(user);
     } catch (e) {
       console.log(e);
     }
@@ -24,6 +26,25 @@ const loaded = ref(false);
     loaded.value = true;
   }
 })();
+
+watch(() => store.user, setUserSessions)
+
+function setUserSessions(user: User | null) {
+  if (user) {
+    fetchSessions();
+  } else {
+    store.wordSessions = [];
+  }
+}
+
+async function fetchSessions() {
+  let sessions = await wordSessionService.list();
+  if (!sessions[0] || sessions[0].isOlderThanOneDay()) {
+    const session = await wordSessionService.create();
+    sessions.unshift(session);
+  }
+  store.wordSessions = sessions;
+}
 
 
 </script>
@@ -41,14 +62,14 @@ const loaded = ref(false);
 </template>
 
 <style scoped lang="scss">
-  .container {
-    display: grid;
-    height: calc(100vh - 50px);
-    grid-template-columns: 300px auto;
-    .sidebar {
-      background: var(--langer-color-grey);
-      height: 100%;
-    }
-  }
+.container {
+  display: grid;
+  height: calc(100vh - 50px);
+  grid-template-columns: 300px auto;
 
+  .sidebar {
+    background: var(--langer-color-grey);
+    height: 100%;
+  }
+}
 </style>

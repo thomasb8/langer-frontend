@@ -9,7 +9,7 @@ export class Word {
     readonly senses: Sense[],
     readonly gender: string | null,
     readonly plural: string | null,
-    readonly formOf: RelatedWord[] | null
+    readonly formOf: string | null
 ) {}
 
   static fromDto(dto: any) {

@@ -9,8 +9,8 @@ export class WordService {
     return res.data.map((data: any) => Word.fromDto(data));
   }
 
-  async getDetailedWord(id: string): Promise<Word> {
-    const res = await this.axios.get(`word/${id}`);
-    return Word.fromDto(res.data);
+  async getDetailedWords(word: string): Promise<Word[]> {
+    const res = await this.axios.get(`word/${word}`);
+    return (res.data as any[]).map(it => Word.fromDto(it));
   }
 }

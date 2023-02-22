@@ -1,13 +1,12 @@
 <template>
+  <div v-for="(detailedWord) of detailedWords">
   <div class="word-details">
     <b v-if="detailedWord.gender">{{ detailedWord.getGenderWord() }}</b>
     <span>&nbsp;{{ detailedWord.word }}&nbsp;</span>
     <i v-if="detailedWord.plural">(pl: {{ detailedWord.plural }})</i>
     <div v-if="detailedWord.formOf">
       Form of:
-      <RouterLink v-for="relatedWord in detailedWord.formOf"
-                  :key="relatedWord.id"
-                  :to="{ name: 'detailed-word', params: { word: relatedWord.word, id: relatedWord.id } }">{{ relatedWord.word }}</RouterLink>
+      <RouterLink :to="{ name: 'detailed-word', params: { word: detailedWord.formOf } }">{{ detailedWord.formOf }}</RouterLink>
     </div>
   </div>
   <div>
@@ -30,6 +29,7 @@
   <div v-if="detailedWord.position === 'verb'">
     <VerbTable :word="detailedWord"></VerbTable>
   </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -49,34 +49,32 @@ export default defineComponent({
   },
   data() {
     return {
-      word: this.$route.params.word,
-      wordId: this.$route.params.id as string,
-      detailedWord: {} as Word
+      word: this.$route.params.word as string,
+      detailedWords: [] as Word[]
     }
   },
   methods: {
     async getWordData() {
-      this.detailedWord = await this.wordService.getDetailedWord(this.wordId);
+      this.detailedWords = await this.wordService.getDetailedWords(this.word);
     },
-    async addWordToExistingSession(wordId: string) {
-      if (store.isUserLoggedIn() && store.latestSession() && !store.latestSessionHasWord(wordId)) {
-        await this.wordSessionService.addWord(store.latestSession()!.id, wordId);
+    async addWordToExistingSession(word: string) {
+      if (store.isUserLoggedIn() && store.latestSession() && !store.latestSessionHasWord(word)) {
+        await this.wordSessionService.addWord(store.latestSession()!.id, word);
         const updated = await this.wordSessionService.get(store.latestSession().id);
-        store.updateLatestSession(updated);
+        store.updateSession(updated);
       }
     }
   },
-  created() {
-    if (this.word && this.wordId) {
-      this.getWordData();
-      this.addWordToExistingSession(this.wordId);
+  async created() {
+    if (this.word) {
+      await this.getWordData();
+      this.addWordToExistingSession(this.detailedWords[0].word);
     }
     this.$watch(() => this.$route.params,
-  (toParams: any) => {
+  async (toParams: any) => {
         this.word = toParams.word;
-        this.wordId = toParams.id;
-        this.getWordData();
-        this.addWordToExistingSession(this.wordId);
+        await this.getWordData();
+        this.addWordToExistingSession(this.detailedWords[0].word);
     })
   }
 })
@@ -85,7 +83,5 @@ export default defineComponent({
 <style scoped lang="scss">
   .gloss {
     border: 1px solid rgba(255, 0, 0, 0.4);
-  }
-  .word-details {
   }
 </style>
