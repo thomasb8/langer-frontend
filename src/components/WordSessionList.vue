@@ -3,6 +3,7 @@ import { store } from "@/common/store";
 import { inject } from "vue";
 import { CONTEXT } from "@/common/keys";
 import type { AppContext } from "@/common/Context";
+import type WordSession from "@/word/WordSession";
 
 const { wordSessionService } = inject(CONTEXT) as AppContext;
 
@@ -17,13 +18,18 @@ async function createSession() {
   store.addSession(session);
 }
 
+async function deleteSession(session: WordSession) {
+  await wordSessionService.deleteSession(session.id);
+  store.removeSession(session);
+}
+
 </script>
 
 <template>
   <div>
     <button v-if="store.isUserLoggedIn()" type="button" @click="createSession()">+</button>
     <div v-for="(session) of store.wordSessions" :key="session.id">
-      {{ session.getFormattedCreationDate() }}
+      <div>{{ session.getFormattedCreationDate() }} <button @click="deleteSession(session)">X</button></div>
       <div v-for="(entry) of session.entries" :key="entry.word">
         <RouterLink :to="{ name: 'detailed-word', params: { word: entry.word } }"><b>{{ entry.word }}</b></RouterLink>
         <button @click="removeEntry(session.id, entry.word)">X</button>

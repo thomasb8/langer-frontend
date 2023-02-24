@@ -15,9 +15,9 @@ export default class WordSession {
     return Intl.DateTimeFormat(navigator.language).format(Date.parse(this.createdAt));
   }
 
-  isOlderThanOneDay() {
+  isNotOlderThanOneDay() {
     const dayInMilliseconds = 24*60*60*1000;
-    return (Date.now() - Date.parse(this.createdAt)) / dayInMilliseconds > 1;
+    return (Date.now() - Date.parse(this.createdAt)) / dayInMilliseconds < 1;
   }
 }
 

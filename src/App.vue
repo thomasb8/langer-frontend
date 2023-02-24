@@ -21,6 +21,8 @@ const loaded = ref(false);
       setUserSessions(user);
     } catch (e) {
       console.log(e);
+      storage.remove(StorageKey.LOGIN_ACCESS_TOKEN);
+      loaded.value = true;
     }
   } else {
     loaded.value = true;
@@ -39,7 +41,7 @@ function setUserSessions(user: User | null) {
 
 async function fetchSessions() {
   let sessions = await wordSessionService.list();
-  if (!sessions[0] || sessions[0].isOlderThanOneDay()) {
+  if (!sessions.some(session => session.isNotOlderThanOneDay())) {
     const session = await wordSessionService.create();
     sessions.unshift(session);
   }

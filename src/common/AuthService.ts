@@ -19,7 +19,7 @@ export class AuthService {
     return res.data.user;
   }
 
-  async getProfile(token: string): Promise<User> {
+  async getProfile(token: string): Promise<User | null> {
     const res = await this.axios.get('/auth/profile', { headers: { 'Authorization': `Bearer ${token}`}});
     if (res.data) {
       this.setUserHeader(token);

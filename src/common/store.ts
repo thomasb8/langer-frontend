@@ -24,6 +24,9 @@ export const store = reactive({
   addSession(session: WordSession) {
     this.wordSessions.unshift(session);
   },
+  removeSession(session: WordSession) {
+    this.wordSessions = this.wordSessions.filter( it => it.id !== session.id);
+  },
   latestSessionHasWord(word: string): boolean {
     return this.latestSession()?.entries?.some((it: WordSessionEntry) => it.word === word) || false
   }
