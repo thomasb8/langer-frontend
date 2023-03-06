@@ -1,5 +1,3 @@
-import { Word } from "@/word/Word";
-
 export default class WordSession {
   constructor(
     readonly id: string,

@@ -1,12 +1,13 @@
-export function debounce(cb: (...args: any[]) => unknown, delay: number) {
-  let timer: ReturnType<typeof setTimeout>;
-  return function(this: any, ...args: any[]) {
+let timer: ReturnType<typeof setTimeout>;
+export function debounce<T>(cb: T, delay: number) {
+  return function(...args: any[]) {
     if(timer) {
-      clearTimeout(timer); // clear any pre-existing timer
+      clearTimeout(timer);
     }
-    const context = this; // get the current context
-    timer = setTimeout(()=>{
-      cb.apply(context, args); // call the function if time expires
+    timer = setTimeout(() =>{
+      if (typeof cb === 'function') {
+        cb(args);
+      }
     }, delay);
   }
 }

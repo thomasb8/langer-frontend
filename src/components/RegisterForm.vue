@@ -1,43 +1,41 @@
-<template>
-  <div>
-    <input type="text" placeholder="Email" v-model="email"/>
-    <input type="password" placeholder="Password" v-model="password" />
-    <input type="password" placeholder="Repeat password" v-model="repeatPassword" />
-    <span v-if="errMessage">{{ errMessage }}</span>
-    <button @click="register()">Login</button>
-  </div>
-</template>
-
-<script lang="ts">
-import { defineComponent, inject } from "vue";
+<script setup lang="ts">
+import { inject, reactive } from "vue";
 import { CONTEXT } from "@/common/keys";
 import type { AppContext } from "@/common/Context";
 
-export default defineComponent({
-  setup() {
-    const { authService } = inject(CONTEXT) as AppContext;
-    return { authService: authService };
-  },
-  data() {
-    return {
-      email: '',
-      password: '',
-      repeatPassword: '',
-      errMessage: ''
-    }
-  },
-  methods: {
-    register() {
-      if (this.password === this.repeatPassword) {
-        const user = this.authService.register(this.email, this.password);
-        this.$emit('success', user);
-      } else {
-        this.errMessage = 'The password fields do not match!'
-      }
-    }
+const { authService } = inject(CONTEXT) as AppContext;
+
+const data = reactive({
+  email: '',
+  password: '',
+  repeatPassword: '',
+  errMessage: '',
+  success: false
+});
+const emit = defineEmits(['success']);
+
+function register() {
+  if (data.password === data.repeatPassword) {
+    const user = authService.register(data.email, data.password);
+    data.success = true;
+  } else {
+    data.errMessage = 'The password fields do not match!'
   }
-})
+}
 </script>
+
+<template>
+  <form @submit.prevent="register()">
+    <input type="text" placeholder="Email" v-model="data.email"/>
+    <input type="password" placeholder="Password" v-model="data.password" />
+    <input type="password" placeholder="Repeat password" v-model="data.repeatPassword" />
+    <span v-if="data.errMessage">{{ data.errMessage }}</span>
+    <button type="submit">Register</button>
+  </form>
+  <div v-if="data.success">
+    You can log in <RouterLink to="/login">here</RouterLink>!
+  </div>
+</template>
 
 <style scoped lang="scss">
 

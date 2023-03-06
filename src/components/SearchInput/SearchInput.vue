@@ -1,31 +1,21 @@
+<script setup lang="ts">
+import SearchIcon from './SearchIcon.svg?component';
+
+const props = defineProps({ inputValue: { type: String, required: true } });
+
+const emits = defineEmits(['onChange']);
+
+function onChange(event: Event) {
+  emits('onChange', (event.target as HTMLInputElement).value);
+}
+</script>
+
 <template>
   <div class="input-container">
     <SearchIcon></SearchIcon>
-    <input type="text" :value="inputValue" @input="onChange"/>
+    <input type="text" :value="props.inputValue" @input="onChange"/>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import SearchIcon from './SearchIcon.svg?component';
-
-export default defineComponent({
-  components: {
-    SearchIcon
-  },
-  props: {
-    inputValue: {
-      type: String,
-      required: true
-    }
-  },
-  methods: {
-    onChange(event: Event) {
-      this.$emit('onChange', (event.target as HTMLInputElement).value);
-    }
-  }
-})
-</script>
 
 <style scoped lang="scss">
 .input-container {

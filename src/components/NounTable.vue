@@ -1,3 +1,34 @@
+<script setup lang="ts">
+import { Word, type Conjugation } from '@/word/Word';
+import { WordTags } from '@/word/WordTags';
+import { computed } from 'vue';
+
+
+const { word } = defineProps({ word: { type: Word, required: true }});
+
+const tableData = computed(() => {
+  return getTableWord();
+});
+
+function getTableWord() {
+  if (!word) return;
+  const dative = getSingularAndPluralForCase(word.conjugations, WordTags.DATIVE);
+  const accusative = getSingularAndPluralForCase(word.conjugations, WordTags.ACCUSATIVE)
+  const genitive = getSingularAndPluralForCase(word.conjugations, WordTags.GENITIVE)
+  const nominative = getSingularAndPluralForCase(word.conjugations, WordTags.NOMINATIVE)
+  return {
+    dative, accusative, genitive, nominative
+  }
+}
+function getSingularAndPluralForCase(conjugations: Conjugation[], wordCase: WordTags) {
+  const forms = conjugations.filter(it => it.tags.includes(wordCase));
+  return {
+    singular: forms.filter(it => it.tags.includes(WordTags.SINGULAR)).map(it => it.form),
+    plural: forms.filter(it => it.tags.includes(WordTags.PLURAL)).map(it => it.form)
+  }
+}
+</script>
+
 <template>
   <table v-if="tableData">
     <tr>
@@ -29,46 +60,6 @@
     </tbody>
   </table>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import type { Conjugation } from "@/word/Word";
-import { WordTags } from "@/word/WordTags";
-import { Word } from "@/word/Word";
-
-export default defineComponent({
-  props: {
-    word: {
-      type: Word,
-      required: true
-    }
-  },
-  computed: {
-    tableData() {
-      return this.getTableWord();
-    }
-  },
-  methods: {
-    getTableWord() {
-      if (!this.word) return;
-      const dative = this.getSingularAndPluralForCase(this.word.conjugations, WordTags.DATIVE);
-      const accusative = this.getSingularAndPluralForCase(this.word.conjugations, WordTags.ACCUSATIVE)
-      const genitive = this.getSingularAndPluralForCase(this.word.conjugations, WordTags.GENITIVE)
-      const nominative = this.getSingularAndPluralForCase(this.word.conjugations, WordTags.NOMINATIVE)
-      return {
-        dative, accusative, genitive, nominative
-      }
-    },
-    getSingularAndPluralForCase(conjugations: Conjugation[], wordCase: WordTags) {
-      const forms = conjugations.filter(it => it.tags.includes(wordCase));
-      return {
-        singular: forms.filter(it => it.tags.includes(WordTags.SINGULAR)).map(it => it.form),
-        plural: forms.filter(it => it.tags.includes(WordTags.PLURAL)).map(it => it.form)
-      }
-    }
-  }
-})
-</script>
 
 <style scoped lang="scss">
 td {

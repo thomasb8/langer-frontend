@@ -1,32 +1,23 @@
-<script lang="ts">
+<script setup lang="ts">
 import WordList from "@/components/WordList.vue";
 import { store } from "@/common/store";
-import { defineComponent, inject } from "vue";
+import { inject } from "vue";
 import { CONTEXT } from "@/common/keys";
 import type { AppContext } from "@/common/Context";
+import { useRouter } from "vue-router";
 
-export default defineComponent({
-  setup() {
-    const { authService } = inject(CONTEXT) as AppContext;
-    return { authService: authService };
-  },
-  components: { WordList },
-  data() {
-    return {
-      store
-    }
-  },
-  methods: {
-    logout() {
-      store.setUser(null);
-      this.authService.logout();
-      this.$router.push('/');
-    },
-    async onWordSelect(event: { word: string, id: string }) {
-      this.$router.push(`/word/${event.word}`)
-    }
-  }
-});
+const { authService } = inject(CONTEXT) as AppContext;
+const router = useRouter();
+
+function logout() {
+  store.setUser(null);
+  authService.logout();
+  router.push('/');
+}
+
+async function onWordSelect(event: { word: string, id: string }) {
+  router.push(`/word/${event.word}`)
+}
 </script>
 
 <template>

@@ -47,8 +47,6 @@ async function fetchSessions() {
   }
   store.wordSessions = sessions;
 }
-
-
 </script>
 
 <template>

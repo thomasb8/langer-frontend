@@ -1,11 +1,60 @@
+<script setup lang="ts">
+import type { Word } from "@/word/Word";
+import { inject, reactive, watch, onMounted, onBeforeUnmount } from "vue";
+import { CONTEXT } from "@/common/keys";
+import type { AppContext } from "@/common/Context";
+import { debounce } from "@/common/utilities";
+import SearchInput from "@/components/SearchInput/SearchInput.vue";
+
+const { wordService } = inject(CONTEXT) as AppContext;
+const data = reactive({
+  inputValue: '',
+  results: [] as Word[],
+  dropdownOpen: false,
+});
+
+const emit = defineEmits(['wordSelect']);
+
+watch(() => data.inputValue, (val) => getDebouncedWords(val));
+
+onMounted(() => {
+  window.addEventListener('click', dropdownListener);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('click', dropdownListener);
+})
+
+async function getWords(word: string) {
+  data.results = await wordService.getWords(word);
+  if (data.results.length) {
+    openDropdown();
+  }
+}
+function selectWord(word: Word) {
+  data.dropdownOpen = false;
+  emit('wordSelect', { word: word.word, id: word.id });
+}
+function openDropdown() {
+  data.dropdownOpen = true;
+}
+function dropdownListener(event: MouseEvent) {
+  if ((event.target as HTMLElement).closest('.input-container') === null) {
+    data.dropdownOpen = false;
+  }
+}
+const getDebouncedWords = (val: string) => debounce(getWords, 200)(val);
+
+</script>
+
 <template>
   <div class="word-list-container">
-    <SearchInput :input-value="inputValue"
-                 @click="results.length > 0 ? openDropdown() : null"
-                 @onChange="inputValue = $event">
+    <SearchInput :input-value="data.inputValue"
+                 @click="data.results.length > 0 ? openDropdown() : null"
+                 @onChange="data.inputValue = $event">
     </SearchInput>
-    <ul class="word-list-dropdown" v-show="dropdownOpen">
-      <li v-for="(result, index) of results" v-bind:key="index" @click="selectWord(result)">
+    <ul class="word-list-dropdown" v-show="data.dropdownOpen">
+      <li v-for="(result, index) of data.results" v-bind:key="index" @click="selectWord(result)">
         <div>
           <b>{{ result.word }}</b>
         </div>
@@ -14,62 +63,6 @@
     </ul>
   </div>
 </template>
-
-<script lang="ts">
-import type { Word } from "@/word/Word";
-import { defineComponent, inject } from "vue";
-import { CONTEXT } from "@/common/keys";
-import type { AppContext } from "@/common/Context";
-import { debounce } from "@/common/utilities";
-import SearchInput from "@/components/SearchInput/SearchInput.vue";
-
-export default defineComponent({
-  components: { SearchInput },
-  setup() {
-    const { wordService } = inject(CONTEXT) as AppContext;
-    return { wordService: wordService };
-  },
-  data() {
-    return {
-      inputValue: '',
-      results: [] as Word[],
-      dropdownOpen: false,
-    }
-  },
-  methods: {
-    getWords: async function(word: string) {
-      this.results = await this.wordService.getWords(word);
-      if (this.results.length) {
-        this.openDropdown();
-      }
-    },
-    selectWord(word: Word) {
-      this.dropdownOpen = false;
-      this.$emit('wordSelect', { word: word.word, id: word.id });
-    },
-    openDropdown() {
-      this.dropdownOpen = true;
-    },
-    dropdownListener(event: MouseEvent) {
-      if ((event.target as HTMLElement).closest('.input-container') === null) {
-        this.dropdownOpen = false;
-      }
-    },
-    getDebouncedWords: debounce(function(this: any, value: string) { this.getWords(value) }, 200)
-  },
-  watch: {
-    inputValue(newVal) {
-      this.getDebouncedWords(newVal);
-    }
-  },
-  created() {
-    window.addEventListener('click', this.dropdownListener);
-  },
-  beforeUnmount() {
-    window.removeEventListener('click', this.dropdownListener);
-  }
-})
-</script>
 
 <style scoped lang="scss">
   .word-list-container {

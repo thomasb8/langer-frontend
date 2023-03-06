@@ -1,38 +1,30 @@
+<script setup lang="ts">
+import type { AppContext } from "@/common/Context";
+import { CONTEXT } from "@/common/keys";
+import { store } from "@/common/store";
+import { inject, ref } from "vue";
+import { useRouter } from "vue-router";
+
+const { authService } = inject(CONTEXT) as AppContext;
+const email = ref('');
+const password = ref('');
+const router = useRouter();
+
+async function login() {
+  const user = await authService.login(email.value, password.value);
+  store.setUser(user);
+  router.push('/');
+}
+
+</script>
+
 <template>
-  <div>
+  <form @submit.prevent="login()">
     <input type="text" placeholder="Email" v-model="email"/>
     <input type="password" placeholder="Password" v-model="password"/>
-    <button @click="login()" placeholder="Repeat password">Login</button>
-  </div>
+    <button type="submit" placeholder="Repeat password">Login</button>
+  </form>
 </template>
-
-<script lang="ts">
-import { defineComponent, inject } from "vue";
-import { CONTEXT } from "@/common/keys";
-import type { AppContext } from "@/common/Context";
-import { store } from "@/common/store";
-
-export default defineComponent({
-  setup() {
-    const { authService } = inject(CONTEXT) as AppContext;
-    return { authService: authService };
-  },
-  data() {
-    return {
-      email: '',
-      password: '',
-      store
-    }
-  },
-  methods: {
-    async login() {
-      const user = await this.authService.login(this.email, this.password);
-      store.setUser(user);
-      this.$router.push('/');
-    }
-  }
-})
-</script>
 
 <style scoped lang="scss">
 
